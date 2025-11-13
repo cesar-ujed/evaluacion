@@ -1,0 +1,54 @@
+{% extends "layouts/main.html" %}
+{% load static %}
+{% block content %}
+
+<style>
+    body {
+      background-image: url("{% static 'images/bg_3.jpg' %}");
+      background-size: cover;  /* Ajusta la imagen al tamaño de la pantalla */
+              background-position: center; /* Centra la imagen */
+              background-repeat: no-repeat; /* No repetir la imagen */
+              background-attachment: fixed; /* Mantiene el fondo fijo al hacer scroll */
+              min-height: 100vh; /* Asegura que cubra toda la pantalla */
+              margin: 0; /* Elimina márgenes */
+          }
+   .card-body label {
+        font-weight: bold !important;
+    } 
+</style>
+
+<div class="container" style="margin-top: 100px;">
+    <div class="card text-center">
+    <form method="post">
+        <h2 class="card-header text-bg-dark"><i class="bi bi-check-circle"></i> {{ evidencia.indicador }}| {{ evidencia.subindicador}}</h2>
+        <div class="card-body">
+            {% if archivo_url %}
+            <div class="mb-3">
+                <label class="form-label">Archivo:</label>
+                <a href="{{ archivo_url }}" target="_blank" class="btn btn-outline-primary btn-sm ms-2">
+                    Ver archivo
+                </a>
+            </div>
+            {% else %}
+                <div class="mb-3">
+                    <label class="form-label">Archivo:</label>
+                        Sin archivo
+                </div>
+            {% endif %}
+            {% csrf_token %}
+            {{ form.as_p }}
+        </div>
+        <div class="card-footer">
+            <div class="d-grid gap-2">
+                <button class="btn btn-dark" type="submit" href="javascript:history.back()">Guardar</button>
+                <a class="btn btn-secondary" href="javascript:history.back()">Cancelar</a>
+            </div>     
+        </div>
+    </form>
+    </div>
+</div>
+
+{% include "layouts/footer.html" %}
+
+
+{% endblock %}

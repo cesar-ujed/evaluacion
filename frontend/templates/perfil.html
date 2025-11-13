@@ -1,0 +1,275 @@
+{% extends "layouts/main.html" %}
+{% load static %}
+{% block content %}
+
+<style>
+    body {
+      background-image: url("{% static 'images/bg_3.jpg' %}");
+      background-size: cover;  /* Ajusta la imagen al tamaño de la pantalla */
+              background-position: center; /* Centra la imagen */
+              background-repeat: no-repeat; /* No repetir la imagen */
+              background-attachment: fixed; /* Mantiene el fondo fijo al hacer scroll */
+              min-height: 100vh; /* Asegura que cubra toda la pantalla */
+              margin: 0; /* Elimina márgenes */
+          }
+
+    h2 {
+        color: #fff;
+    }   
+    
+    .text-success {
+        font-weight: 600;
+    }
+
+    .status-badge {
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+    }
+  
+    .badge-active {
+        background-color: rgba(40, 167, 69, 0.2);
+    }
+  
+    .badge-inactive {
+        background-color: rgba(220, 53, 69, 0.2);
+    }
+
+    .search-container {
+        margin: 20px 0;
+        max-width: 400px;
+    }
+    h2{
+        color: #000;
+    }
+    .status-badge {
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+    }
+  
+    .badge-aprobado {
+        background-color: rgba(40, 167, 69, 0.2);
+    }
+
+    .badge-revision {
+        background-color: rgba(179, 255, 2, 0.2);
+    }
+  
+    .badge-pendiente {
+        background-color: rgba(220, 53, 69, 0.2);
+    }
+    .disabled {
+        opacity: 0.6;
+        cursor: not-allowed !important;
+    }
+</style>
+
+<div class="container mt-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start mb-4">
+           <h2 class="mb-3 mb-md-0">Bienvenido a tu perfil {{ user.username }}</h2>
+    </div>
+</div>
+<div class="container" style="margin-top: 40px;">
+    <div class="search-container">
+    <!-- Barra de búsqueda -->
+    <form method="get" action="" class="mb-4">
+    <div class="input-group">
+        <input 
+        type="text" 
+        name="q" 
+        value="{{ search_query }}" 
+        placeholder="Buscar por nombre o indicador" 
+        class="form-control"
+        >
+        <button type="submit" class="btn btn-dark"><i class="bi bi-search"></i></button>
+    </div>
+    </form>
+    <div class="container">
+        <a href="{% url 'inicio' %}" class="btn btn-dark">+ NUEVA EVIDENCIA</a>
+    </div>
+    </div>
+
+    <table class="table table-striped table-hover" border="2" style="margin: 17px;">
+    <thead>
+        <tr class="table-dark">
+            <th>ID</th>
+            <th>INDICADOR/SUBINDICADOR</th>
+            <th>NOMBRE EVIDENCIA</th>
+            <th>ARCHIVO</th>
+            <th>FEEDBACK</th>
+            <th>STATUS</th>
+            <th>ACCIONES</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for i in records %}
+        <tr>
+            <td>{{ i.id }}</td>
+            <td>{{ i.indicador.nombre }} | {{ i.subindicador.letra }}</td>
+            <td>{{ i.nombre_evidencia }}</td>  
+            <td>
+                {% if i.archivo %}
+                    <a 
+                        class="btn btn-primary" 
+                        href="{% url 'obtener_pdf' i.id %}" 
+                        target="_blank">
+                        <i class="bi bi-archive"> Ver</i>
+                    </a>
+                {% else %}
+                    vacío
+                {% endif %}        
+            </td>
+            <td>
+                {% if i.feedback %}
+                    <button class="btn btn-primary btn-feedback" 
+                            data-feedback="{{ i.feedback }}"
+                            data-id="{{ i.id }}"
+                            data-fecha="{{ i.fecha_creacion|date:'d/m/Y' }}">
+                        Ver Feedback
+                    </button>
+                {% else %}   
+                    <span class="no-feedback">sin feedback</span>
+                {% endif %}   
+            </td>
+            <td>
+                {% if i.status == "pendiente" %}
+                    <span class="text-danger status-badge badge-pendiente">Pendiente</span>
+                {% elif i.status == "en_revision" %}
+                    <span class="text-warning status-badge badge-revision">Revisión</span>
+                {% elif i.status == "aprobado" %}
+                    <span class="text-success status-badge badge-aprobado">Aprobado</span>
+                {% else %}
+                    <span class="text-secondary status-badge">Desconocido</span>
+                {% endif %}
+            </td>
+            <td>
+                <form method="POST" action="{% url 'eliminar' i.pk %}" id="form-eliminar-{{ i.pk }}">
+                    {% csrf_token %}
+                    <div class="btn-group" role="group">
+                        {% if i.status != "aprobado" %}
+                            <!-- Botón eliminar -->
+                            <button 
+                                type="button"
+                                class="btn btn-outline-danger btn-sm btn-delete"
+                                data-status="{{ i.status }}"
+                                data-id="{{ i.id }}"
+                                data-nombre="{{ i.nombre_evidencia|escapejs }}"
+                                data-pk="{{ i.pk }}"
+                                onclick="confirmarEliminacion(this.dataset.nombre, this.dataset.pk)">
+                                <i class="bi bi-x-lg"></i>
+                            </button> 
+
+                            <!-- Botón editar -->
+                            <a href="{% url 'editar' i.id %}" class="btn btn-outline-secondary btn-sm action-btn">
+                                <i class="bi bi-pen-fill"></i>
+                            </a>
+                        {% else %}
+                            <!-- Botones deshabilitados cuando está aprobado -->
+                            <button class="btn btn-outline-danger btn-sm disabled" title="No se puede eliminar una evidencia aprobada">
+                                <i class="bi bi-x-lg"></i>
+                            </button> 
+                            <a class="btn btn-outline-secondary btn-sm disabled" title="No se puede editar una evidencia aprobada">
+                                <i class="bi bi-lock-fill"></i>
+                            </a>
+                        {% endif %}
+
+                        {% if i.archivo %}
+                        <a  href="{% url 'descargar_evidencia' i.id %}" class="btn btn-outline-primary btn-sm action-btn">
+                            <i class="bi bi-download"></i>
+                        </a>
+                        {% else %}
+                            <a class="btn btn-outline-secondary btn-sm action-btn" disabled>
+                               <i class="bi bi-exclamation-circle"></i>                           
+                            </a>
+                        {% endif %}                                            
+                    </div>
+                </form>      
+            </td>
+        </tr>
+    {% empty %}
+        <tr>
+            <td colspan="9" class="text-center">No hay registros</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+
+{% include 'layouts/footer.html' %}
+
+<script>
+    function confirmarEliminacion(nombreEvidencia, pk) {
+        Swal.fire({
+            title: '¿Eliminar evidencia?',
+            html: `Estás a punto de eliminar <b>"${nombreEvidencia}"</b>.<br>¿Continuar?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById(`form-eliminar-${pk}`).submit();
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+            // Agregar event listeners a todos los botones de feedback
+            const feedbackButtons = document.querySelectorAll('.btn-feedback');
+            
+            feedbackButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const feedbackText = this.getAttribute('data-feedback');
+                    const recordId = this.getAttribute('data-id');
+                    const recordDate = this.getAttribute('data-fecha');
+                    
+                    // Mostrar SweetAlert con el feedback
+                    Swal.fire({
+                        title: `Recomendaciones`,
+                        html: `
+                            <div style="text-align: left;">
+                                {% comment %} <p><strong>Feedback:</strong></p> {% endcomment %}
+                                <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; margin-top: 10px;">
+                                    ${feedbackText}
+                                </div>
+                            </div>
+                        `,
+                        icon: 'info',
+                        confirmButtonText: 'Entendido',
+                        confirmButtonColor: '#4a6cf7',
+                        width: '600px'
+                    });
+                });
+            });
+        });
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Deshabilitar botones de eliminación para evidencias aprobadas
+        const deleteButtons = document.querySelectorAll('button.btn-delete');
+        
+        deleteButtons.forEach(button => {
+            const status = button.getAttribute('data-status');
+            if (status === 'aprobado') {
+                button.disabled = true;
+                button.classList.add('disabled');
+                // Opcional: Agregar tooltip o mensaje
+                button.title = 'No se puede eliminar una evidencia aprobada';
+            }
+        });
+
+        // (Tu código existente para los botones de feedback)
+        const feedbackButtons = document.querySelectorAll('.btn-feedback');
+        feedbackButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // ... (tu código original del feedback)
+            });
+        });
+    });
+
+</script>
+
+{% endblock %}

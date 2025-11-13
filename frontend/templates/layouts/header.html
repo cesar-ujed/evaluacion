@@ -1,0 +1,83 @@
+{% load static %}
+
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #951823;">
+    <div class="container-fluid">
+        <!-- Logo -->
+        <a class="navbar-brand" href="#">
+            <img src="{% static 'images/logo_withe.png' %}" alt="Logo SSGA" width="80">
+        </a>
+
+        <!-- Botón para móviles -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" 
+                aria-controls="navbarMain" aria-expanded="false" aria-label="Menú">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Contenido principal del navbar -->
+        <div class="collapse navbar-collapse" id="navbarMain">
+            <ul class="navbar-nav me-auto">
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'inicio' %}active{% endif %}" 
+                           href="{% url 'inicio' %}">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'inicio_admin' %}active{% endif %}" 
+                           href="{% url 'inicio_admin' %}">Panel Administrador</a>
+                    </li>
+                {% endif %}
+            </ul>
+
+            <ul class="navbar-nav ms-auto">
+                {% if user.is_authenticated %}
+                    <!-- Notificaciones -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link position-relative" href="#" id="notiMenu" role="button" 
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-bell-fill"></i>
+                            {% if user.notificaciones_no_leidas > 0 %}
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    {{ user.notificaciones_no_leidas }}
+                                    <span class="visually-hidden">notificaciones no leídas</span>
+                                </span>
+                            {% endif %}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end p-2" aria-labelledby="notiMenu" style="min-width: 300px;">
+                            {% for n in user.notificaciones.all|dictsortreversed:"fecha"|slice:":5" %}
+                                <li class="dropdown-item {% if not n.leida %}fw-bold{% endif %}">
+                                    {{ n.mensaje }}
+                                    <br>
+                                    <small class="text-muted">{{ n.fecha|date:"d/m/Y H:i" }}</small>
+                                </li>
+                            {% empty %}
+                                <li class="dropdown-item text-center text-muted">No hay notificaciones</li>
+                            {% endfor %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-center" href="{% url 'notificaciones' %}">Ver todas</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- Menú usuario -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userMenu" role="button" 
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-square"> {{ user.username }}</i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+                            <li><a class="dropdown-item" href="{% url 'perfil' %}"><i class="bi bi-person-square"> Perfil</i></a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="bi bi-box-arrow-left"> Cerrar sesión</i></a></li>
+                        </ul>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">Iniciar sesión</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'registro' %}">Registrarse</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>

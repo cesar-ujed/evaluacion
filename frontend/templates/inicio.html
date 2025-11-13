@@ -1,0 +1,107 @@
+{% extends 'layouts/main.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+    body {
+      background-image: url("{% static 'images/bg_3.jpg' %}");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat; 
+      background-attachment: fixed; 
+      min-height: 100vh; 
+      margin: 0; 
+    }
+    
+    .cards-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+    }
+    
+    .cards-grid {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    .card {
+        background-color: #d1ad6d;
+        width: 18rem;
+        flex-shrink: 0;
+    }
+
+    .card-course:hover {
+        transform: translateY(-5px);
+        transition: all 0.5s ease;
+        background-color: #212529;
+        color: #fff;
+    }
+    
+    h2 {
+        color: #000;
+        margin-bottom: 40px;
+    }
+</style>          
+
+<!-- <div class="container" style="text-align: right;">
+    <p>Hora: {{ hora_actual|date:"h:i A" }}</p>
+</div> -->
+<div class="cards-container" style="margin-top: 80px;">
+    <h2>LISTA DE MÓDULOS</h2>
+    
+    <div class="cards-grid">
+
+        <a class="card text-center card-course text-decoration-none" href="{% url 'modulo_a' %}">
+            <div class="card-body">
+                <h5 class="card-title">MÓDULO A</h5>
+                <p class="card-text">EJE I - IV</p>
+            </div>
+        </a>
+        
+        <a class="card text-center card-course text-decoration-none" href="{% url 'modulo_b' %}">
+            <div class="card-body">
+                <h5 class="card-title">MÓDULO B</h5>
+                <p class="card-text">EJE V</p>
+            </div>
+        </a>
+        
+        <a class="card text-center card-course text-decoration-none" href="{% url 'modulo_c' %}">
+            <div class="card-body">
+                <h5 class="card-title">MÓDULO C</h5>
+                <p class="card-text">EJE VI</p>
+            </div>
+        </a>
+        
+        <a class="card text-center card-course text-decoration-none" href="{% url 'modulo_d' %}">
+            <div class="card-body">
+                <h5 class="card-title">MÓDULO D</h5>
+                <p class="card-text">EJE VII</p>
+            </div>
+        </a>
+        
+        <a class="card text-center card-course text-decoration-none" href="{% url 'modulo_e' %}">
+            <div class="card-body">
+                <h5 class="card-title">MÓDULO E</h5>
+                <p class="card-text">EJE VIII</p>
+            </div>
+        </a>
+        
+        <a class="card text-center card-course text-decoration-none" href="{% url 'modulo_f' %}">
+            <div class="card-body">
+                <h5 class="card-title">MÓDULO F</h5>
+                <p class="card-text">EJE IX</p>
+            </div>
+        </a>
+    </div>
+</div>
+
+<br><br>
+
+{% include "layouts/footer.html" %}
+
+{% endblock %}

@@ -21,10 +21,12 @@
                         <a class="nav-link {% if request.resolver_match.url_name == 'inicio' %}active{% endif %}" 
                            href="{% url 'inicio' %}">Inicio</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'inicio_admin' %}active{% endif %}" 
-                           href="{% url 'inicio_admin' %}">Panel Administrador</a>
-                    </li>
+                    {% if user.is_staff %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'inicio_admin' %}active{% endif %}" 
+                            href="{% url 'inicio_admin' %}">Panel Administrador</a>
+                        </li>
+                    {% endif %}    
                 {% endif %}
             </ul>
 

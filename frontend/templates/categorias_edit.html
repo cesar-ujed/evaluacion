@@ -1,0 +1,143 @@
+{% extends "layouts/main.html" %}
+{% load static %}
+{% block content %}
+
+<style>
+  body {
+    background-image: url("{% static 'images/bg_3.jpg' %}");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    min-height: 100vh;
+    margin: 0;
+  }
+
+  /* Overlay oscuro para legibilidad */
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: -1;
+  }
+
+  /* Card más pequeña y centrada */
+  .card-custom {
+    max-width: 450px; /* Tamaño máximo de la card */
+    width: 90%; /* Adaptable en pantallas pequeñas */
+    margin: 100px auto; /* Centrada vertical y horizontalmente */
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+  }
+
+  .card-header {
+    font-size: 1.3rem;
+    font-weight: 600;
+  }
+
+  .card-body label {
+    font-weight: bold !important;
+  }
+
+  .btn-dark {
+    background-color: #212529;
+    border: none;
+  }
+
+  .btn-dark:hover {
+    background-color: #343a40;
+  }
+
+  /* Espaciado entre botones */
+  .card-footer .btn {
+    border-radius: 8px;
+  }
+
+  /* Ajuste responsivo adicional */
+  @media (max-width: 576px) {
+    .card-header {
+      font-size: 1.1rem;
+    }
+  }
+</style>
+
+<div class="container">
+  <div class="card card-custom text-center bg-light">
+    <form method="post" id="editar-evidencia-form">
+      <h2 class="card-header text-bg-dark">
+        <i class="bi bi-pencil-square"></i> Editar Categoría
+      </h2>
+      <div class="card-body p-4">
+        <p class="text-muted">
+            <strong>Módulo:</strong> {{ categoria.eje.modulo.nombre }} 
+        </p>
+        {% csrf_token %}
+        {{ form }}
+      </div>
+      <div class="card-footer bg-light">
+        <div class="d-grid gap-2">
+          <button class="btn btn-dark" type="button" onclick="confirmarGuardar()">Guardar</button>
+          <a class="btn btn-secondary" href="#" onclick="confirmarCancelacion()">Cancelar</a>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% include "layouts/footer.html" %}
+
+<script>
+// Función para guardar cambios
+function confirmarGuardar() {
+    Swal.fire({
+        title: '¿Guardar cambios?',
+        text: "¿Estás seguro de modificar este evento?",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#28a745',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Sí, guardar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById('editar-evidencia-form').submit(); // Envía el formulario
+        }
+    });
+}
+
+
+// Función para cancelar edición
+function confirmarCancelacion() {
+    Swal.fire({
+        title: '¿Descartar cambios?',
+        text: "Los cambios no guardados se perderán.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#6c757d',
+        cancelButtonColor: '#28a745',
+        confirmButtonText: 'Sí, cancelar',
+        cancelButtonText: 'Seguir editando'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = "{% url 'categorias' %}"; // Redirige a la lista
+        }
+    });
+}
+
+// Opcional: Alertar al cerrar la página con cambios no guardados
+let formOriginal = document.getElementById('editar-evidencia-form').innerHTML;
+
+window.addEventListener('beforeunload', function(e) {
+    if (document.getElementById('editar-evidencia-form').innerHTML !== formOriginal) {
+        e.preventDefault();
+        e.returnValue = '';
+    }
+});
+</script>
+
+{% endblock %}

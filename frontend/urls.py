@@ -51,6 +51,18 @@ urlpatterns = [
     # notificaciones
     path('notificaciones/', views.NotificacionesView.as_view(), name='notificaciones'),
     path('notificacion/eliminar/<int:pk>/', views.eliminar_notificacion, name='eliminar_notificacion'),
+
+    #panel_admin
+    path('categorias/', views.CategoriasListView.as_view(), name='categorias'),
+    path('create_categoria/', views.CategoriasCreateView.as_view(), name='create_categoria'),
+    path('delete_cat/<int:pk>/', views.DeleteCategoria.as_view(), name='delete_categoria'),
+    path('categoria_edit/<int:pk>', views.EditCategoriaView.as_view(), name='categoria_edit'),
+
+    path('indicadores/', views.IndicadorListView.as_view(), name='indicadores'),
+    path('create_indicador/', views.IndicadorCreateView.as_view(), name='create_indicador'),
+    path('delete_indicador/<int:pk>/', views.DeleteIndicador.as_view(), name='delete_indicador'),
+    path('indicador_edit/<int:pk>', views.EditIndicadorView.as_view(), name='indicador_edit'),
+
 ]
 
 if settings.DEBUG == True:

@@ -26,6 +26,14 @@
                             <a class="nav-link {% if request.resolver_match.url_name == 'inicio_admin' %}active{% endif %}" 
                             href="{% url 'inicio_admin' %}">Panel Administrador</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'categorias' %}active{% endif %}" 
+                            href="{% url 'categorias' %}">Categorías</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'indicadores' %}active{% endif %}" 
+                            href="{% url 'indicadores' %}">Indicadores</a>
+                        </li>
                     {% endif %}    
                 {% endif %}
             </ul>

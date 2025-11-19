@@ -602,5 +602,79 @@ def eliminar_notificacion(request, pk):
     notificacion = get_object_or_404(Notificacion, pk=pk)
     notificacion.delete()
     messages.success(request, "Notificación eliminada correctamente.")
-    return redirect('notificaciones')  # o el nombre de tu vista/lista       
+    return redirect('notificaciones')  # o el nombre de tu vista/lista      
+
+
+
+# CATEGORIAS
+
+class CategoriasCreateView(CreateView):
+    model = Categoria
+    template_name = 'categoria_create.html'
+    form_class = CategoriaEditForm
+    success_url = reverse_lazy('categorias')
+
+    def form_valid(self, form):
+        # form.instance.usuario = self.request.user
+        response = super().form_valid(form)
+        messages.success(self.request, "¡Evento guardado correctamente!")
+        return response
+
+
+class CategoriasListView(ListView):
+    model = Categoria
+    template_name = 'categorias.html' 
+    context_object_name = 'categorias'
+    ordering = 'id'
+
+
+class DeleteCategoria(DeleteView):
+    model = Categoria
+    template_name = 'confirmar_eliminacion.html'
+    success_url = reverse_lazy('categorias')
+
+
+class EditCategoriaView(UpdateView):
+    model = Categoria
+    template_name = 'categorias_edit.html'
+    form_class = CategoriaEditForm
+    success_url = reverse_lazy('categorias')   
+
+
+# Indicador
+
+class IndicadorCreateView(CreateView):
+    model = Indicador
+    template_name = 'indicador_create.html'
+    form_class = IndicadorForm
+    success_url = reverse_lazy('indicadores')
+
+    def form_valid(self, form):
+        # form.instance.usuario = self.request.user
+        response = super().form_valid(form)
+        messages.success(self.request, "¡Indicador guardado correctamente!")
+        return response
+    
+
+class IndicadorListView(ListView):
+    model = Indicador
+    template_name = 'indicadores.html' 
+    context_object_name = 'indicadores'
+    ordering = 'id'
+
+
+class DeleteIndicador(DeleteView):
+    model = Indicador
+    template_name = 'confirmar_eliminacion.html'
+    success_url = reverse_lazy('indicadores')
+
+
+class EditIndicadorView(UpdateView):
+    model = Indicador
+    template_name = 'indicadores_edit.html'
+    form_class = IndicadorForm
+    success_url = reverse_lazy('indicadores')   
+
+
+
 

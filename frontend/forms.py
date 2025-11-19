@@ -309,4 +309,32 @@ class EditForm(forms.ModelForm):
             'comentarios': forms.TextInput(attrs={'class': 'form-control'}),
             'juicio_valor': forms.Textarea(attrs={'class': 'form-control'}),
         }
-        exclude = ['usuario']        
+        exclude = ['usuario']     
+
+
+class CategoriaEditForm(forms.ModelForm):
+    class Meta:
+        model = Categoria
+        fields = [
+            'nombre', 
+            'eje',
+        ]
+        widgets = {
+            'nombre': forms.TextInput(attrs={'class': 'form-control'}),
+            'eje': forms.Select(attrs={'class': 'form-control'}),
+        }
+        exclude = ['descripcion']        
+
+
+class IndicadorForm(forms.ModelForm):
+    class Meta:
+        model = Indicador
+        fields = [
+            'nombre', 
+            'categoria',
+        ]
+        widgets = {
+            'nombre': forms.TextInput(attrs={'class': 'form-control'}),
+            'categoria': forms.Select(attrs={'class': 'form-control'}),
+        }
+        exclude = ['estandar'] 

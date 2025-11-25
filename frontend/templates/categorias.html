@@ -79,11 +79,11 @@
     <form method="get" action="" class="mb-4">
     <div class="input-group">
         <input 
-        type="text" 
-        name="q" 
-        value="{{ search_query }}" 
-        placeholder="Buscar" 
-        class="form-control"
+            type="text" 
+            name="q" 
+            class="form-control me-2" 
+            placeholder="Buscar categoria..." 
+            value="{{ request.GET.q }}"
         >
         <button type="submit" class="btn btn-dark"><i class="bi bi-search"></i></button>
     </div>

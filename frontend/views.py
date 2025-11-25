@@ -627,6 +627,16 @@ class CategoriasListView(ListView):
     context_object_name = 'categorias'
     ordering = 'id'
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        query = self.request.GET.get("q")
+
+        if query:
+            queryset = queryset.filter(nombre__icontains=query)
+            # Cambia “nombre” por el campo que quieras buscar
+
+        return queryset
+
 
 class DeleteCategoria(DeleteView):
     model = Categoria
@@ -661,6 +671,17 @@ class IndicadorListView(ListView):
     template_name = 'indicadores.html' 
     context_object_name = 'indicadores'
     ordering = 'id'
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        query = self.request.GET.get("q")
+
+        if query:
+            queryset = queryset.filter(nombre__icontains=query)
+            # Cambia “nombre” por el campo que quieras buscar
+
+        return queryset
+
 
 
 class DeleteIndicador(DeleteView):
